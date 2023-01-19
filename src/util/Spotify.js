@@ -42,6 +42,30 @@ const Spotify = {
         }));
     },
 
+    async getUser() {
+        const accessToken = this.getAccessToken();
+        const headers = {
+            Authorization: `Bearer ${accessToken}`
+        }
+        const response = await fetch('https://api.spotify.com/v1/me', {
+            headers: headers
+        });
+        return await response.json();
+    },
+
+    async createPlaylist(name, userID) {
+        const accessToken = this.getAccessToken();
+        const headers = {
+            Authorization: `Bearer ${accessToken}`
+        }
+        const response = await fetch(`https://api.spotify.com/v1/users/${userID}/playlists`, {
+            headers: headers,
+            method: 'POST',
+            body: JSON.stringify({ name: name })
+        });
+        return await response.json();
+    },
+
     async savePlaylist(playlistName, trackURIs) {
         if (!playlistName || !trackURIs) return;
         const accessToken = this.getAccessToken();
@@ -51,24 +75,16 @@ const Spotify = {
         const responseUser = await fetch('https://api.spotify.com/v1/me', {
             headers: headers
         });
-        const jsonResponseUser = await responseUser.json();
 
-        const userID = jsonResponseUser.id;
-        const responsePlaylist = await fetch(`https://api.spotify.com/v1/users/${userID}/playlists`, {
-            headers: headers,
-            method: 'POST',
-            body: JSON.stringify({ name: playlistName })
-        });
-        const jsonResponsePlaylist = await responsePlaylist.json();
+        const userID = (await this.getUser()).id;
+        const playlistID = (await this.createPlaylist(playlistName, userID)).id;
 
-        const playlistID = jsonResponsePlaylist.id;
         const responseAddItem = await fetch(`https://api.spotify.com/v1/users/${userID}/playlists/${playlistID}/tracks`, {
             headers: headers,
             method: 'POST',
             body: JSON.stringify({ uris: trackURIs })
         });
         const jsonResponseAddItem = await responseAddItem.json();
-
     }
 }
 
