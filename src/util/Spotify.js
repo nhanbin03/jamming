@@ -1,4 +1,6 @@
-const clientID = '';
+import Config from "../config"
+
+const clientID = Config.SPOTIFY_API;
 const redirectURI = 'http://localhost:3000/'
 let accessToken;
 
