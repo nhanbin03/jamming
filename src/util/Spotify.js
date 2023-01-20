@@ -101,9 +101,15 @@ const Spotify = {
         const jsonResponse = await response.json();
 
         let savedPlaylists = jsonResponse.items;
-        savedPlaylists = savedPlaylists.map(playlist => playlist.name);
+        savedPlaylists = savedPlaylists.map(playlist => {
+            return {
+                name: playlist.name,
+                id: playlist.id
+            }
+        });
         return savedPlaylists;
     }
+
 }
 
 export default Spotify;
