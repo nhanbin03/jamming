@@ -3,6 +3,7 @@ import Config from "../config"
 const clientID = Config.SPOTIFY_API;
 const redirectURI = 'http://localhost:3000/'
 let accessToken;
+let userID;
 
 const Spotify = {
     getAccessToken() {
@@ -23,7 +24,7 @@ const Spotify = {
             window.location = `https://accounts.spotify.com/authorize?client_id=${clientID}&response_type=token&scope=playlist-modify-public&redirect_uri=${redirectURI}`
         }
     },
-
+    
     async search(term) {
         const accessToken = this.getAccessToken();
         const response = await fetch(`https://api.spotify.com/v1/search?type=track&q=${term}`, {
@@ -42,7 +43,9 @@ const Spotify = {
         }));
     },
 
-    async getUser() {
+    async getUserID() {
+        if (userID)
+            return userID;
         const accessToken = this.getAccessToken();
         const headers = {
             Authorization: `Bearer ${accessToken}`
@@ -50,7 +53,7 @@ const Spotify = {
         const response = await fetch('https://api.spotify.com/v1/me', {
             headers: headers
         });
-        return await response.json();
+        return (await response.json()).id;
     },
 
     async createPlaylist(name, userID) {
@@ -72,11 +75,8 @@ const Spotify = {
         const headers = {
             Authorization: `Bearer ${accessToken}`
         }
-        const responseUser = await fetch('https://api.spotify.com/v1/me', {
-            headers: headers
-        });
 
-        const userID = (await this.getUser()).id;
+        const userID = await this.getUserID();
         const playlistID = (await this.createPlaylist(playlistName, userID)).id;
 
         const responseAddItem = await fetch(`https://api.spotify.com/v1/users/${userID}/playlists/${playlistID}/tracks`, {
@@ -84,7 +84,25 @@ const Spotify = {
             method: 'POST',
             body: JSON.stringify({ uris: trackURIs })
         });
-        const jsonResponseAddItem = await responseAddItem.json();
+        // const jsonResponseAddItem = await responseAddItem.json();
+    },
+    
+    async getSavedPlaylists() {
+        const accessToken = this.getAccessToken();
+        const headers = {
+            Authorization: `Bearer ${accessToken}`
+        }
+
+        const userID = await this.getUserID();
+        
+        const response = await fetch(`https://api.spotify.com/v1/users/${userID}/playlists`, {
+            headers: headers
+        });
+        const jsonResponse = await response.json();
+
+        let savedPlaylists = jsonResponse.items;
+        savedPlaylists = savedPlaylists.map(playlist => playlist.name);
+        return savedPlaylists;
     }
 }
 
