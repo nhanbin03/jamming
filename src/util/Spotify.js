@@ -1,12 +1,13 @@
 import Config from "../config"
 
-const clientID = Config.SPOTIFY_API;
+const clientID = `${process.env.REACT_APP_SPOTIFY_API}`;
 const redirectURI = 'http://localhost:3000/'
 let accessToken;
 let userID;
 
 const Spotify = {
     getAccessToken() {
+        console.log(clientID);
         if (accessToken) {
             return accessToken;
         }
