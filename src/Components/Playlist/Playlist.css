@@ -41,10 +41,12 @@
     border: 0;
     outline: 0;
     margin-top: 2.27rem;
+    padding-bottom: 1.07rem;border-bottom: 1px solid rgba(256, 256, 256, 0.8);
     background: transparent;
     font-family: 'Poppins', sans-serif;
     font-size: 1.55rem;
     color: #fff;
+    
 }
 
 .Playlist-save:hover {
