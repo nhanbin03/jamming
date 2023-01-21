@@ -84,7 +84,10 @@ const Spotify = {
             method: 'POST',
             body: JSON.stringify({ uris: trackURIs })
         });
-        // const jsonResponseAddItem = await responseAddItem.json();
+        return {
+            name: playlistName,
+            id: playlistID
+        }
     },
     
     async getSavedPlaylists() {
@@ -108,6 +111,21 @@ const Spotify = {
             }
         });
         return savedPlaylists;
+    },
+
+    async unfollowPlaylist(playlist) {
+        const accessToken = this.getAccessToken();
+        const headers = {
+            Authorization: `Bearer ${accessToken}`
+        }
+
+        const playlistID = playlist.id;
+
+        const response = await fetch(`https://api.spotify.com/v1/playlists/${playlistID}/followers`, {
+            headers: headers,
+            method: 'DELETE'
+        })
+
     }
 
 }
