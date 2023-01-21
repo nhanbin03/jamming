@@ -1,4 +1,4 @@
-import Config from "../config"
+
 
 const clientID = `${process.env.REACT_APP_SPOTIFY_API}`;
 const redirectURI = 'http://localhost:3000/'
