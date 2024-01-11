@@ -38,6 +38,7 @@
     ]
   },
   "devDependencies": {
+    "@babel/core": "^7.16.12",
     "react-error-overlay": "6.0.9"
   },
   "overrides": {
